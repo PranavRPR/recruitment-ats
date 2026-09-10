@@ -1,0 +1,22 @@
+# Frontend
+**/node_modules/
+**/dist/
+
+# Backend
+**/target/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
