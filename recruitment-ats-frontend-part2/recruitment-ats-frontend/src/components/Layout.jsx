@@ -14,6 +14,7 @@ export default function Layout() {
   const user = currentUser || {};
   const menu = menus[user.role] || [];
   const [toast, setToast] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const handleApiError = (event) => setToast({ message: event.detail, type: "error" });
@@ -28,36 +29,93 @@ export default function Layout() {
 
   return (
     <div className="app-shell">
-      <aside className="sidebar">
+      <button
+        type="button"
+        className={`sidebar-backdrop ${sidebarOpen ? "visible" : ""}`}
+        aria-label="Close navigation"
+        onClick={() => setSidebarOpen(false)}
+      />
+
+      <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
         <div className="brand">
           <div className="brand-mark">AI</div>
-          <div><strong>RecruitAI</strong><small>ATS Platform</small></div>
+          <div>
+            <strong>RecruitAI</strong>
+            <small>ATS Platform</small>
+          </div>
         </div>
 
         <div className="role-badge">{user.role?.replace("_", " ")}</div>
 
-        <nav>
+        <nav className="sidebar-nav" aria-label="Main navigation">
           {menu.map(([label, path, icon]) => (
-            <NavLink key={path} to={path} className={({isActive}) => isActive ? "nav-item active" : "nav-item"}>
-              <span>{icon}</span>{label}
+            <NavLink
+              key={path}
+              to={path}
+              onClick={() => setSidebarOpen(false)}
+              className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")}
+            >
+              <span className="nav-icon">{icon}</span>
+              <span>{label}</span>
             </NavLink>
           ))}
         </nav>
 
-        <button className="logout" onClick={logout}>↪ Sign out</button>
+        <div className="sidebar-user-card">
+          <div className="avatar">{(user.name || "U")[0]}</div>
+          <div className="sidebar-user-meta">
+            <strong>{user.name || "User"}</strong>
+            <span>{user.email || "No email"}</span>
+          </div>
+        </div>
+
+        <button className="logout" onClick={logout} type="button">
+          <span>↪</span>
+          Sign out
+        </button>
       </aside>
 
       <main className="main">
         <header className="topbar">
-          <div className="mobile-brand">RecruitAI</div>
+          <div className="topbar-left">
+            <button
+              type="button"
+              className="mobile-menu-btn"
+              aria-label="Open navigation"
+              aria-expanded={sidebarOpen}
+              onClick={() => setSidebarOpen((open) => !open)}
+            >
+              ☰
+            </button>
+            <div className="mobile-brand">RecruitAI</div>
+          </div>
+
+          <div className="topbar-search">
+            <span>⌕</span>
+            <input type="text" aria-label="Search" placeholder="Search" />
+          </div>
+
           <div className="top-actions">
-            <span className="user-name">{user.name}</span>
-            <div className="avatar">{(user.name || "U")[0]}</div>
+            <button type="button" className="icon-button" aria-label="Notifications">
+              🔔
+            </button>
+            <div className="user-pill">
+              <span className="user-name">{user.name}</span>
+              <div className="avatar small">{(user.name || "U")[0]}</div>
+            </div>
           </div>
         </header>
+
         <section className="content"><Outlet /></section>
       </main>
-      {toast && <div className={`toast ${toast.type}`} role="status"><span>!</span>{toast.message}<button className="icon-btn" onClick={() => setToast(null)} aria-label="Dismiss notification">×</button></div>}
+
+      {toast && (
+        <div className={`toast ${toast.type}`} role="status">
+          <span>{toast.type === "success" ? "✓" : "!"}</span>
+          {toast.message}
+          <button className="icon-btn" onClick={() => setToast(null)} aria-label="Dismiss notification">×</button>
+        </div>
+      )}
     </div>
   );
 }

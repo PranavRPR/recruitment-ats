@@ -3,7 +3,7 @@ import api, { getApiErrorMessage } from "../api";
 import { useAuth } from "../context/AuthContext";
 import Toast from "../components/Toast";
 
-const stages=["APPLIED","SCREENING","SHORTLISTED","INTERVIEW","OFFERED","HIRED","REJECTED"];
+const stages=["APPLIED","SCREENING","SHORTLISTED","INTERVIEW","OFFER","HIRED","REJECTED"];
 
 export default function Applications() {
   const { currentUser: user, isAuthenticated, isInitialized }=useAuth(); const [apps,setApps]=useState([]); const [jobId,setJobId]=useState(""); const [loading,setLoading]=useState(false); const [toast,setToast]=useState(null); const [updating,setUpdating]=useState(null);
